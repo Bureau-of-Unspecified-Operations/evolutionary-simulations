@@ -17,7 +17,7 @@
 # distant from the seed)
 
 
-MAX_GEN = 9
+MAX_GEN = 10
 
 
 
@@ -30,19 +30,55 @@ def freqOfGenes(population):
             freq[actor] = 1
     return freq
 
+def freq2Fraction(freq):
+    cnt = 0
+    frac = dict()
+    for key in freq.keys():
+        cnt += freq[key]
+    print("cnt " + str(cnt))
+    for key in freq.keys():
+        frac[key] = freq[key] / cnt
+    return frac
 
 def printFreq(freq):
     for actor in freq.keys():
-        print("%s: %d\n"%(actor,freq[actor]))
+        print("%s: %f\n"%(actor,freq[actor]))
 
 def printPopulation(population, n):
     print("\n\nGeneration %d\n\n"%(n))
-    printFreq(population)
+    printFreq(freq2Fraction(population))
 
 def update(dict, key, val):
     if key in dict:
         dict[key] += val
     else: dict[key] = val
+
+
+def scoreComplexiy(actor):
+    cnt = 0
+    for s in actor:
+        cnt += 1 if s == "1" else 0
+    return cnt
+        
+def complexityFromFreq(population):
+    complexPop = dict()
+    for key in population.keys():
+        complexity = scoreComplexiy(key)
+        update(complexPop, complexity, 1)
+    return complexPop
+    
+def printComplexity(population, n):
+    print("\n\n Gen %d\n"%(n))
+    complex = complexityFromFreq(population)
+    printFreq(freq2Fraction(complex))
+
+
+##################################
+## EVO FUNCTIONS
+################################
+
+
+
     
 def mutate(bit):
     return "0" if bit == "1" else "1"
@@ -53,7 +89,6 @@ def replicate(actor):
         child = actor[:i] + mutate(actor[i]) + actor[i + 1:]
         children.append(child)
     return children
-
 
 
 def mutate(actor, i):
@@ -77,6 +112,8 @@ def generate():
         for actor in population.keys():
             replicate(actor, population[actor], nextGen)
         population = nextGen
+
+    printComplexity(population,MAX_GEN)
 
         
 generate()
