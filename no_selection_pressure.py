@@ -31,14 +31,15 @@ def freqOfGenes(population):
     return freq
 
 def freq2Fraction(freq):
-    cnt = 0
+    total = 0
     frac = dict()
     for key in freq.keys():
-        cnt += freq[key]
-    print("cnt " + str(cnt))
+        total += freq[key]
+    print("cnt " + str(total))
     for key in freq.keys():
-        frac[key] = freq[key] / cnt
+        frac[key] = freq[key] / total
     return frac
+
 
 def printFreq(freq):
     for actor in freq.keys():
@@ -53,18 +54,20 @@ def update(dict, key, val):
         dict[key] += val
     else: dict[key] = val
 
-
+#complexity is the number of '1's (how many mutations did it take?)
 def scoreComplexiy(actor):
     cnt = 0
     for s in actor:
         cnt += 1 if s == "1" else 0
     return cnt
+
+
         
 def complexityFromFreq(population):
     complexPop = dict()
     for key in population.keys():
         complexity = scoreComplexiy(key)
-        update(complexPop, complexity, 1)
+        update(complexPop, complexity, population[key])
     return complexPop
     
 def printComplexity(population, n):
@@ -107,13 +110,13 @@ def generate():
     seed = "00000000"
     population[seed] = 1
     for t in range(MAX_GEN):
-        printPopulation(population, t)
+        printComplexity(population,t)
         nextGen = dict()
         for actor in population.keys():
             replicate(actor, population[actor], nextGen)
         population = nextGen
 
-    printComplexity(population,MAX_GEN)
+
 
         
 generate()
