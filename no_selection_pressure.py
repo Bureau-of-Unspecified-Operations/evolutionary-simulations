@@ -35,10 +35,14 @@ def printFreq(freq):
     for actor in freq.keys():
         print("%s: %d\n"%(actor,freq[actor]))
 
-def printPopulation(population,n):
+def printPopulation(population, n):
     print("\n\nGeneration %d\n\n"%(n))
-    freq = freqOfGenes(population)
-    printFreq(freq)
+    printFreq(population)
+
+def update(dict, key, val):
+    if key in dict:
+        dict[key] += val
+    else: dict[key] = val
     
 def mutate(bit):
     return "0" if bit == "1" else "1"
@@ -51,17 +55,30 @@ def replicate(actor):
     return children
 
 
+
+def mutate(actor, i):
+    mut = "0" if actor[i] == "1" else "1"
+    return actor[:i] + mut + actor[i+1:]
+
+def replicate(actor, cnt, nextGen):
+    for i in range(len(actor)):
+        child = mutate(actor, i)
+        update(nextGen, child, cnt)
+        
+
 def generate():
-    seed = "00000"
-    population = list()
-    population.append(seed)
+
+    population = dict()
+    seed = "00000000"
+    population[seed] = 1
     for t in range(MAX_GEN):
         printPopulation(population, t)
-        nextGen = list()
-        for actor in population:
-            nextGen.extend(replicate(actor))
+        nextGen = dict()
+        for actor in population.keys():
+            replicate(actor, population[actor], nextGen)
         population = nextGen
 
+        
 generate()
         
 
